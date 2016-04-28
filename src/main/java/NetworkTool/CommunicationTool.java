@@ -40,7 +40,8 @@ public class CommunicationTool {
         HttpURLConnection connection = this.getConnection(url, method, header);
 
         // Write JSON parameters to the output stream
-        connection = passParameters(connection, paramsStr);
+        if (method!=RequestMethod.GET)
+            connection = passParameters(connection, paramsStr);
 
         // If the caller don't need any feedback, send the request and return the empty string
         if (needFeedback) {
@@ -98,6 +99,6 @@ public class CommunicationTool {
 
         CommunicationTool communicationTool = new CommunicationTool();
         String response = communicationTool.send("http://10.108.122.134:8000/subtask/transport/5346850b1517a9f8254a9fc4791e193d65aa60baa82a507ef63471c19e000123", "{\"appName\":\"欢乐西游-手机游戏助手\",\"appVersion\":\"1.0\",\"status\":4,\"appUrlBin\":\"app4/M00/03/E9/Cmx6nlYwGySAZSn4AD8z3xW_AMI1563806\",\"appHash\":\"aaacfb67daaab92591618a1defbb2df84e5336bca506584f5bd2cc1edffc39\",\"appLogoUrl\":\"img1/M00/03/77/Cmx6nlYwGySAdDyUAACVOWq6Cvk429.png\",\"agentId\":\"ed61cf67073429b9a7c0\",\"appPackageName\":\"com.lanjing.hlxytools\",\"msg\":\"Apk is successfully transported\"}",RequestMethod.PUT, Constants.NEED_FEEDBACK_OR_NOT);
-        System.out.println(response.toString());
+        System.out.println(response);
     }
 }

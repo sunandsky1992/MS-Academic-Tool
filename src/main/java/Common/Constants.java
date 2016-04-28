@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Created by ss on 16-4-28.
  */
 public class Constants {
-    public static RequestMethod DEFAULT_REQUEST_METHOD = RequestMethod.POST;
+    public static RequestMethod DEFAULT_REQUEST_METHOD = RequestMethod.GET;
 
     public static final boolean NEED_FEEDBACK_OR_NOT = true;
 
