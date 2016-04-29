@@ -1,10 +1,15 @@
 package NetworkTool;
 
-import Struct.APIResponse;
-import Struct.Entity;
+import Struct.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ss on 16-4-28.
@@ -27,7 +32,147 @@ public class SendApi {
         return res;
     }
 
-    public Entity analyzeResponse(String res) {
+    public List<Entity> generateEntities(JSONArray entities) {
+        List<Entity> res = new ArrayList<Entity>();
+        int number = entities.length();
+        for (int i=0;i<number;i++) {
+            JSONObject jsonEntity = entities.getJSONObject(i);
+            Entity entity = new Entity();
+            if (jsonEntity.has("logprob")) {
+                entity.setLogprob(jsonEntity.getDouble("logprob"));
+            }
+
+            if (jsonEntity.has("Id")) {
+                entity.setId(jsonEntity.getInt("Id"));
+            }
+
+            if (jsonEntity.has("Ti")) {
+                entity.setTi(jsonEntity.getString("Ti"));
+            }
+
+            if (jsonEntity.has("Y")) {
+                entity.setY(jsonEntity.getInt("Y"));
+            }
+
+            if (jsonEntity.has("D")) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String date = jsonEntity.getString("D");
+                try {
+                    entity.setD(simpleDateFormat.parse(date));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (jsonEntity.has("CC")) {
+                entity.setCC(jsonEntity.getInt("CC"));
+            }
+
+            if (jsonEntity.has("AA")) {
+                List<EntityAA> AAs = new ArrayList<EntityAA>();
+                JSONArray JSONAAs = jsonEntity.getJSONArray("AA");
+                int AALength = JSONAAs.length();
+                for (int j=0;j<AALength;j++) {
+                    EntityAA entityAA = new EntityAA();
+                    JSONObject jsonAA = JSONAAs.getJSONObject(j);
+                    if (jsonAA.has("AuN")) {
+                        entityAA.setAA_AuN(jsonAA.getString("AuN"));
+                    }
+                    if (jsonAA.has("AuId")) {
+                        entityAA.setAA_AuId(jsonAA.getInt("AuId"));
+                    }
+                    if (jsonAA.has("AfN")) {
+                        entityAA.setAA_AfN(jsonAA.getString("AfN"));
+                    }
+                    if (jsonAA.has("AfId")) {
+                        entityAA.setAA_AfId(jsonAA.getInt("AfId"));
+                    }
+                    AAs.add(entityAA);
+                }
+                entity.setEntityAA(AAs);
+            }
+
+            if (jsonEntity.has("F")) {
+                List<EntityF> Fs = new ArrayList<EntityF>();
+                JSONArray JSONFs = jsonEntity.getJSONArray("F");
+                int FLength = JSONFs.length();
+                for (int j=0;j<FLength;j++) {
+                    EntityF entityF = new EntityF();
+                    JSONObject jsonF = JSONFs.getJSONObject(j);
+                    if (jsonF.has("FN")) {
+                        entityF.setF_FN(jsonF.getString("FN"));
+                    }
+                    if (jsonF.has("FId")) {
+                        entityF.setF_FId(jsonF.getInt("FId"));
+                    }
+
+                    Fs.add(entityF);
+                }
+                entity.setEntityF(Fs);
+            }
+
+            if (jsonEntity.has("J")) {
+                List<EntityJ> Js = new ArrayList<EntityJ>();
+                JSONArray JSONJs = jsonEntity.getJSONArray("J");
+                int JLength = JSONJs.length();
+                for (int j=0;j<JLength;j++) {
+                    EntityJ entityJ = new EntityJ();
+                    JSONObject jsonJ = JSONJs.getJSONObject(j);
+                    if (jsonJ.has("JN")) {
+                        entityJ.setJ_JN(jsonJ.getString("JN"));
+                    }
+                    if (jsonJ.has("Id")) {
+                        entityJ.setJ_Id(jsonJ.getInt("Id"));
+                    }
+
+                    Js.add(entityJ);
+                }
+                entity.setEntityJ(Js);
+            }
+
+            if (jsonEntity.has("C")) {
+                EntityC entityC = new EntityC();
+                JSONObject JSONC = jsonEntity.getJSONObject("C");
+
+                if (JSONC.has("CN")) {
+                    entityC.setC_CN(JSONC.getString("CN"));
+                }
+                if (JSONC.has("Id")) {
+                    entityC.setC_Id(JSONC.getInt("Id"));
+                }
+
+                entity.setEntityC(entityC);
+            }
+
+            if (jsonEntity.has("RId")) {
+                List<EntityR> Rs = new ArrayList<EntityR>();
+                JSONArray JSONRs = jsonEntity.getJSONArray("RId");
+                int RLength = JSONRs.length();
+                for (int j=0;j<RLength;j++) {
+                    EntityR entityR = new EntityR();
+                    entityR.setRId(JSONRs.getInt(j));
+                    Rs.add(entityR);
+                }
+                entity.setEntityR(Rs);
+            }
+
+            if (jsonEntity.has("W")) {
+                List<EntityW> Ws = new ArrayList<EntityW>();
+                JSONArray JSONWs = jsonEntity.getJSONArray("W");
+                int WLength = JSONWs.length();
+                for (int j=0;j<WLength;j++) {
+                    EntityW entityW = new EntityW();
+                    entityW.setW(JSONWs.getString(j));
+                    Ws.add(entityW);
+                }
+                entity.setEntityW(Ws);
+            }
+            res.add(entity);
+        }
+        return res;
+    }
+
+    public APIResponse analyzeResponse(String res) {
         APIResponse apiResponse = new APIResponse();
         JSONObject jsonObject = new JSONObject(res);
 
@@ -36,12 +181,20 @@ public class SendApi {
             apiResponse.setExpr(expr);
         }
 
-        
+        if (jsonObject.has("entities")) {
+            List<Entity> entities = generateEntities(jsonObject.getJSONArray("entities"));
+            apiResponse.setEntities(entities);
+        }
+
+        return apiResponse;
     }
 
     public static void main(String args[]) {
         SendApi sendApi = new SendApi();
-        String res = sendApi.send("Id=2140251882",100,0,"attributes=Id,AA.AuId,AA.AfId");
+        String res = sendApi.send("Id=2140251882",100,0,"attributes=Id,AA.AuId,AA.AfId,D,C.CN,RId,W");
         System.out.println(res);
+        APIResponse apiResponse = new APIResponse();
+        apiResponse = sendApi.analyzeResponse(res);
+        System.out.println(apiResponse.getEntities().get(0).getEntityAA().get(0).getAA_AfN());
     }
 }

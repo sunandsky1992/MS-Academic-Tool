@@ -8,19 +8,19 @@ import java.util.List;
  * Created by ss on 16-4-28.
  */
 public class Entity {
-    private int logprob;                 //api返回值中有
-    private int Id;                     //entity ID     1
-    private String Ti;                  //paper title   2
-    private int Y;                      //paper year    3
-    private Date D;                     //paper date    4
-    private int CC;                     //citation count    5
+    private double logprob = 0;                 //api返回值中有
+    private int Id = 0;                     //entity ID     1
+    private String Ti = "";                  //paper title   2
+    private int Y = 0;                      //paper year    3
+    private Date D = null;                     //paper date    4
+    private int CC = 0;                     //citation count    5
 
-    private List<EntityAA> entityAAs = new ArrayList<EntityAA>();
-    private List<EntityC> entityAAC = new ArrayList<EntityC>();
-    private List<EntityF> entityAAF = new ArrayList<EntityF>();
-    private List<EntityJ> entityAAJ = new ArrayList<EntityJ>();
-    private List<EntityR> entityAAR = new ArrayList<EntityR>();
-    private List<EntityW> entityAAW = new ArrayList<EntityW>();
+    private List<EntityAA> entityAA = new ArrayList<EntityAA>();
+    private EntityC entityC = new EntityC();
+    private List<EntityF> entityF = new ArrayList<EntityF>();
+    private List<EntityJ> entityJ = new ArrayList<EntityJ>();
+    private List<EntityR> entityR = new ArrayList<EntityR>();
+    private List<EntityW> entityW = new ArrayList<EntityW>();
 
     public int getId() {
         return Id;
@@ -62,59 +62,59 @@ public class Entity {
         this.CC = CC;
     }
 
-    public List<EntityAA> getEntityAAs() {
-        return entityAAs;
+    public List<EntityAA> getEntityAA() {
+        return entityAA;
     }
 
-    public void setEntityAAs(List<EntityAA> entityAAs) {
-        this.entityAAs = entityAAs;
+    public void setEntityAA(List<EntityAA> entityAA) {
+        this.entityAA = entityAA;
     }
 
-    public List<EntityC> getEntityAAC() {
-        return entityAAC;
+    public EntityC getEntityC() {
+        return entityC;
     }
 
-    public void setEntityAAC(List<EntityC> entityAAC) {
-        this.entityAAC = entityAAC;
+    public void setEntityC(EntityC entityC) {
+        this.entityC = entityC;
     }
 
-    public List<EntityF> getEntityAAF() {
-        return entityAAF;
+    public List<EntityF> getEntityF() {
+        return entityF;
     }
 
-    public void setEntityAAF(List<EntityF> entityAAF) {
-        this.entityAAF = entityAAF;
+    public void setEntityF(List<EntityF> entityF) {
+        this.entityF = entityF;
     }
 
-    public List<EntityJ> getEntityAAJ() {
-        return entityAAJ;
+    public List<EntityJ> getEntityJ() {
+        return entityJ;
     }
 
-    public void setEntityAAJ(List<EntityJ> entityAAJ) {
-        this.entityAAJ = entityAAJ;
+    public void setEntityJ(List<EntityJ> entityJ) {
+        this.entityJ = entityJ;
     }
 
-    public List<EntityR> getEntityAAR() {
-        return entityAAR;
+    public List<EntityR> getEntityR() {
+        return entityR;
     }
 
-    public void setEntityAAR(List<EntityR> entityAAR) {
-        this.entityAAR = entityAAR;
+    public void setEntityR(List<EntityR> entityR) {
+        this.entityR = entityR;
     }
 
-    public List<EntityW> getEntityAAW() {
-        return entityAAW;
+    public List<EntityW> getEntityW() {
+        return entityW;
     }
 
-    public void setEntityAAW(List<EntityW> entityAAW) {
-        this.entityAAW = entityAAW;
+    public void setEntityW(List<EntityW> entityW) {
+        this.entityW = entityW;
     }
 
-    public int getLogprob() {
+    public double getLogprob() {
         return logprob;
     }
 
-    public void setLogprob(int logprob) {
+    public void setLogprob(double logprob) {
         this.logprob = logprob;
     }
 }
