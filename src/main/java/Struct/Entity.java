@@ -18,7 +18,7 @@ public class Entity {
     private List<EntityAA> entityAA = new ArrayList<EntityAA>();
     private EntityC entityC = new EntityC();
     private List<EntityF> entityF = new ArrayList<EntityF>();
-    private List<EntityJ> entityJ = new ArrayList<EntityJ>();
+    private EntityJ entityJ = new EntityJ();
     private List<EntityR> entityR = new ArrayList<EntityR>();
     private List<EntityW> entityW = new ArrayList<EntityW>();
 
@@ -86,11 +86,11 @@ public class Entity {
         this.entityF = entityF;
     }
 
-    public List<EntityJ> getEntityJ() {
+    public EntityJ getEntityJ() {
         return entityJ;
     }
 
-    public void setEntityJ(List<EntityJ> entityJ) {
+    public void setEntityJ(EntityJ entityJ) {
         this.entityJ = entityJ;
     }
 

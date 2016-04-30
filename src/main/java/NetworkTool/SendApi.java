@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by ss on 16-4-28.
  */
+//TODO 有空格会出错?? 没有orderby F是个数组??
 public class SendApi {
     private CommunicationTool communicationTool = new CommunicationTool();
 
@@ -112,22 +113,16 @@ public class SendApi {
             }
 
             if (jsonEntity.has("J")) {
-                List<EntityJ> Js = new ArrayList<EntityJ>();
-                JSONArray JSONJs = jsonEntity.getJSONArray("J");
-                int JLength = JSONJs.length();
-                for (int j=0;j<JLength;j++) {
+                JSONObject JSONJ = jsonEntity.getJSONObject("J");
                     EntityJ entityJ = new EntityJ();
-                    JSONObject jsonJ = JSONJs.getJSONObject(j);
-                    if (jsonJ.has("JN")) {
-                        entityJ.setJ_JN(jsonJ.getString("JN"));
+                    if (JSONJ.has("JN")) {
+                        entityJ.setJ_JN(JSONJ.getString("JN"));
                     }
-                    if (jsonJ.has("Id")) {
-                        entityJ.setJ_Id(jsonJ.getInt("Id"));
+                    if (JSONJ.has("JId")) {
+                        entityJ.setJ_Id(JSONJ.getInt("JId"));
                     }
 
-                    Js.add(entityJ);
-                }
-                entity.setEntityJ(Js);
+                entity.setEntityJ(entityJ);
             }
 
             if (jsonEntity.has("C")) {
@@ -137,8 +132,8 @@ public class SendApi {
                 if (JSONC.has("CN")) {
                     entityC.setC_CN(JSONC.getString("CN"));
                 }
-                if (JSONC.has("Id")) {
-                    entityC.setC_Id(JSONC.getInt("Id"));
+                if (JSONC.has("CId")) {
+                    entityC.setC_Id(JSONC.getInt("CId"));
                 }
 
                 entity.setEntityC(entityC);
@@ -191,7 +186,7 @@ public class SendApi {
 
     public static void main(String args[]) {
         SendApi sendApi = new SendApi();
-        String res = sendApi.send("Id=2140251882",100,0,"attributes=Id,AA.AuId,AA.AfId,D,C.CN,RId,W");
+        String res = sendApi.send("Y>2005",100,0,"attributes=Id,J.JN,J.ID");
         System.out.println(res);
         APIResponse apiResponse = new APIResponse();
         apiResponse = sendApi.analyzeResponse(res);
