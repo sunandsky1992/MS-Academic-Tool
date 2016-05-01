@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class Entity {
     private double logprob = 0;                 //api返回值中有
-    private int Id = 0;                     //entity ID     1
+    private long Id = 0l;                     //entity ID     1
     private String Ti = "";                  //paper title   2
     private int Y = 0;                      //paper year    3
     private Date D = null;                     //paper date    4
@@ -22,11 +22,11 @@ public class Entity {
     private List<EntityR> entityR = new ArrayList<EntityR>();
     private List<EntityW> entityW = new ArrayList<EntityW>();
 
-    public int getId() {
+    public long getId() {
         return Id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         Id = id;
     }
 

@@ -44,7 +44,7 @@ public class SendApi {
             }
 
             if (jsonEntity.has("Id")) {
-                entity.setId(jsonEntity.getInt("Id"));
+                entity.setId(jsonEntity.getLong("Id"));
             }
 
             if (jsonEntity.has("Ti")) {
@@ -80,13 +80,13 @@ public class SendApi {
                         entityAA.setAA_AuN(jsonAA.getString("AuN"));
                     }
                     if (jsonAA.has("AuId")) {
-                        entityAA.setAA_AuId(jsonAA.getInt("AuId"));
+                        entityAA.setAA_AuId(jsonAA.getLong("AuId"));
                     }
                     if (jsonAA.has("AfN")) {
                         entityAA.setAA_AfN(jsonAA.getString("AfN"));
                     }
                     if (jsonAA.has("AfId")) {
-                        entityAA.setAA_AfId(jsonAA.getInt("AfId"));
+                        entityAA.setAA_AfId(jsonAA.getLong("AfId"));
                     }
                     AAs.add(entityAA);
                 }
@@ -104,7 +104,7 @@ public class SendApi {
                         entityF.setF_FN(jsonF.getString("FN"));
                     }
                     if (jsonF.has("FId")) {
-                        entityF.setF_FId(jsonF.getInt("FId"));
+                        entityF.setF_FId(jsonF.getLong("FId"));
                     }
 
                     Fs.add(entityF);
@@ -119,7 +119,7 @@ public class SendApi {
                         entityJ.setJ_JN(JSONJ.getString("JN"));
                     }
                     if (JSONJ.has("JId")) {
-                        entityJ.setJ_Id(JSONJ.getInt("JId"));
+                        entityJ.setJ_Id(JSONJ.getLong("JId"));
                     }
 
                 entity.setEntityJ(entityJ);
@@ -133,7 +133,7 @@ public class SendApi {
                     entityC.setC_CN(JSONC.getString("CN"));
                 }
                 if (JSONC.has("CId")) {
-                    entityC.setC_Id(JSONC.getInt("CId"));
+                    entityC.setC_Id(JSONC.getLong("CId"));
                 }
 
                 entity.setEntityC(entityC);
@@ -145,7 +145,7 @@ public class SendApi {
                 int RLength = JSONRs.length();
                 for (int j=0;j<RLength;j++) {
                     EntityR entityR = new EntityR();
-                    entityR.setRId(JSONRs.getInt(j));
+                    entityR.setRId(JSONRs.getLong(j));
                     Rs.add(entityR);
                 }
                 entity.setEntityR(Rs);
@@ -186,7 +186,7 @@ public class SendApi {
 
     public static void main(String args[]) {
         SendApi sendApi = new SendApi();
-        String res = sendApi.send("Y>2005",100,0,"attributes=Id,J.JN,J.ID");
+            String res = sendApi.send("Y>2005",100,0,"attributes=Id,J.JN,J.ID");
         System.out.println(res);
         APIResponse apiResponse = new APIResponse();
         apiResponse = sendApi.analyzeResponse(res);

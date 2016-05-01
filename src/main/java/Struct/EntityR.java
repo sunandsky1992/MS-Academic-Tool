@@ -4,13 +4,13 @@ package Struct;
  * Created by ss on 16-4-28.
  */
 public class EntityR {
-    private int RId;                    //reference ID  16
+    private long RId = 0;                    //reference ID  16
 
-    public int getRId() {
+    public long getRId() {
         return RId;
     }
 
-    public void setRId(int RId) {
+    public void setRId(long RId) {
         this.RId = RId;
     }
 }

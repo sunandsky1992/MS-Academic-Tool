@@ -4,8 +4,8 @@ package Struct;
  * Created by ss on 16-4-28.
  */
 public class EntityJ {
-    private String J_JN;                //journal name  12
-    private int J_Id;                   //journal ID    13
+    private String J_JN = "";                //journal name  12
+    private long J_Id = 0;                   //journal ID    13
 
     public String getJ_JN() {
         return J_JN;
@@ -15,11 +15,11 @@ public class EntityJ {
         J_JN = j_JN;
     }
 
-    public int getJ_Id() {
+    public long getJ_Id() {
         return J_Id;
     }
 
-    public void setJ_Id(int j_Id) {
+    public void setJ_Id(long j_Id) {
         J_Id = j_Id;
     }
 }
