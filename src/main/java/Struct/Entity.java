@@ -16,9 +16,9 @@ public class Entity {
     private int CC = 0;                     //citation count    5
 
     private List<EntityAA> entityAA = new ArrayList<EntityAA>();
-    private EntityC entityC = new EntityC();
+    private EntityC entityC = null;
     private List<EntityF> entityF = new ArrayList<EntityF>();
-    private EntityJ entityJ = new EntityJ();
+    private EntityJ entityJ = null;
     private List<EntityR> entityR = new ArrayList<EntityR>();
     private List<EntityW> entityW = new ArrayList<EntityW>();
 

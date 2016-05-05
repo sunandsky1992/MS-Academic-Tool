@@ -10,10 +10,9 @@ import java.util.List;
 /**
  * Created by ss on 16/4/30.
  */
-public class PathTools {
+public class  PathTools {
     public boolean hasPath(Entity a, Entity b) {
-        boolean res = false;
-        res = res || idAndId(a,b);
+        boolean res = idAndId(a,b);
         res = res || FIdAndFId(a,b);
         res = res || CIdAndCId(a,b);
         res = res || JIdAndJId(a,b);
