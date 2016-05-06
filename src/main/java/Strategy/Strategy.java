@@ -2,6 +2,7 @@ package Strategy;
 
 import Common.Constants;
 import NetworkTool.SendApi;
+import Path.PathTools;
 import Struct.*;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ import java.util.List;
 //TODO 考虑搜索方式方法
 public class Strategy {
     public List<long[]> res = new ArrayList<long[]>();
+    public String attribute = "attributes=Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId";
 
     public Entity getById(long beginId) {
         String query = "Id=" + beginId;
@@ -61,6 +63,7 @@ public class Strategy {
         }
 
         //下一个为ID
+        //TODO 可以优化
         if ((endType.equals(Constants.ID_TYPE) ||
                 endType.equals(Constants.AUID_TYPE)) && step <= 2) {
             List<EntityR> entityRs = entity.getEntityR();
@@ -100,9 +103,8 @@ public class Strategy {
         }
 
         //下一个为AfID
-        //id to uid
-        //如果有 uid to id 则反过来
-        if (type.equals(Constants.AUID_TYPE) && ((endType.equals(Constants.AUID_TYPE) && step<2))) {
+
+        if (type.equals(Constants.AUID_TYPE) && ((endType.equals(Constants.AUID_TYPE) && step<=2))) {
             List<EntityAA> entityAAs = entity.getEntityAA();
             for (EntityAA entityAA:entityAAs) {
                 path[step] = entityAA.getAA_AfId();
@@ -115,6 +117,31 @@ public class Strategy {
                 if (!entities.isEmpty()) {
                     path[step+1] = endId;
                     res.add(path.clone());
+                }
+            }
+        }
+
+        if (type.equals(Constants.AUID_TYPE) && ((endType.equals(Constants.ID_TYPE) && step<2))) {
+            List<EntityAA> entityAAs = entity.getEntityAA();
+            for (EntityAA entityAA:entityAAs) {
+                path[step] = entityAA.getAA_AfId();
+                String query = "And(Composite(AA.AfId="+entityAA.getAA_AfId()+"),Id="+endId+")";
+                String attribute = "attributes=Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId";
+                SendApi sendApi = new SendApi();
+                String jsonStr = sendApi.send(query, 1000, 0, attribute);
+                APIResponse apiResponse = sendApi.analyzeResponse(jsonStr);
+                List<Entity> entities = apiResponse.getEntities();
+                if (!entities.isEmpty()) {
+                    for (Entity entity1:entities) {
+                        for (EntityAA entityAA1:entity1.getEntityAA()) {
+                            if (entityAA1.getAA_AfId() == entityAA.getAA_AfId()) {
+                                path[step + 1] = entityAA1.getAA_AuId();
+                                path[step + 2] = endId;
+                                res.add(path.clone());
+                            }
+                        }
+                    }
+
                 }
             }
         }
@@ -176,11 +203,56 @@ public class Strategy {
         }
     }
 
+
+    //单一的搜索路径
+    public List<long[]> IdId(long beginId, long endId, Entity entity){
+        List<long[]> res = new ArrayList<long[]>();
+        List<EntityR> entityRs = entity.getEntityR();
+        for (EntityR entityR: entityRs){
+            if (entityR.getRId() == endId) {
+                long[] ls = {beginId,endId};
+                res.add(ls);
+            }
+        }
+        return res;
+    }
+
+    public List<long[]> IdIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        List<EntityR> entityRs = entity.getEntityR();
+        String query = "";
+        query = "And(Or(";
+        for (EntityR entityR : entityRs) {
+            query+="Id="+entityR.getRId()+",";
+        }
+        query = query.substring(0,query.length()-1);
+        query += "),RId="+endId+")";
+        String jsonStr = SendApi.send(query,1000,0,attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entity1 : entities) {
+            long[] l = {beginId,entity1.getId(),endId};
+            res.add(l);
+        }
+        return res;
+    }
+
+    public List<long[]> IDMULTIID(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        return res;
+    }
+
     public static void main(String args[]) {
         Strategy strategy = new Strategy();
         Entity entity = strategy.getById(1502768748);
         long[] a = {1502768748,0,0,0};
-        strategy.findPath(1502768748l,Constants.ID_TYPE,entity,2122841972l,Constants.ID_TYPE,a,1);
+        strategy.findPath(1502768748l, Constants.ID_TYPE, entity, 2122841972l, Constants.ID_TYPE, a, 1);
         System.out.println(strategy.res.size());
+        for (long[] l:strategy.res) {
+            for (long t :l){
+                System.out.print(t+" ");
+            }
+            System.out.println();
+        }
     }
 }

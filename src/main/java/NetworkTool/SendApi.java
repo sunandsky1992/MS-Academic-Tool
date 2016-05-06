@@ -16,11 +16,11 @@ import java.util.List;
  */
 //TODO 有空格会出错?? 没有orderby F是个数组??
 public class SendApi {
-    private CommunicationTool communicationTool = new CommunicationTool();
 
-    private String key = "f7cc29509a8443c5b3a5e56b0e38b5a6";
+    private static String key = "f7cc29509a8443c5b3a5e56b0e38b5a6";
 
-    public  String send(String query, int count,int offset,String attributes) {
+    public  static String send(String query, int count,int offset,String attributes) {
+         CommunicationTool communicationTool = new CommunicationTool();
         String request = "https://oxfordhk.azure-api.net/academic/v1.0/evaluate?"
                 +"expr="+query+"&count="+count+"&offset="+offset+"&"+attributes
                 + "&subscription-key="+key;
@@ -34,7 +34,7 @@ public class SendApi {
         return res;
     }
 
-    public List<Entity> generateEntities(JSONArray entities) {
+    public static List<Entity> generateEntities(JSONArray entities) {
         List<Entity> res = new ArrayList<Entity>();
         int number = entities.length();
         for (int i=0;i<number;i++) {
@@ -168,7 +168,7 @@ public class SendApi {
         return res;
     }
 
-    public APIResponse analyzeResponse(String res) {
+    public static APIResponse analyzeResponse(String res) {
         APIResponse apiResponse = new APIResponse();
         JSONObject jsonObject = new JSONObject(res);
 
