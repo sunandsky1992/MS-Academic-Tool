@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$//MS-Academic-Tool.iml" filepath="$PROJECT_DIR$//MS-Academic-Tool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testb.iml" filepath="$PROJECT_DIR$/testb.iml" />
     </modules>
   </component>
 </project>

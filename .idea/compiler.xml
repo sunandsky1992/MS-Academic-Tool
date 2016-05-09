@@ -24,9 +24,17 @@
         <processorPath useClasspath="true" />
         <module name="MS-Academic-Tool" />
       </profile>
+      <profile default="false" name="Annotation profile for testb" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="testb" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="MS-Academic-Tool" target="1.5" />
+      <module name="testb" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

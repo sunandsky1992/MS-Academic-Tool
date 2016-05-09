@@ -213,6 +213,7 @@ public class Strategy {
             if (entityR.getRId() == endId) {
                 long[] ls = {beginId,endId};
                 res.add(ls);
+                break;
             }
         }
         return res;
@@ -242,6 +243,15 @@ public class Strategy {
                 long[] l = {beginId, entity1.getId(), endId};
                 res.add(l);
             }
+        } else if (entityRs.size()==1){
+            query = "And(Id="+entityRs.get(0).getRId()+",RId="+endId+")";
+            String jsonStr = SendApi.send(query, 10000, 0, attribute);
+            APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+            List<Entity> entities = apiResponse.getEntities();
+            for (Entity entity1 : entities) {
+                long[] l = {beginId, entity1.getId(), endId};
+                res.add(l);
+            }
         }
         return res;
     }
@@ -253,40 +263,11 @@ public class Strategy {
         for (EntityF entityF:entityFs) {
             FIds.add(entityF.getF_FId());
         }
-        String query = "";
         Entity endEntity = getById(endId);
-        for (int i=0;i<entityFs.size()*endEntity.getEntityF().size()-1;i++) {
-            query+="Or(";
-        }
-        query+="And(Composite(F.FId="+entityFs.get(0).getF_FId()
-                +"),Composite(F.FId="+endEntity.getEntityF().get(0).getF_FId()+")),";
-
-        for (int i =0; i<entityFs.size();i++) {
-            for (int j = 0; j<endEntity.getEntityF().size();j++) {
-                if (i==0 && j==0)
-                    continue;
-                query+="And(Composite(F.FId="+entityFs.get(i).getF_FId()
-                        +"),Composite(F.FId="+endEntity.getEntityF().get(j).getF_FId()+"))),";
-            }
-        }
-//        for (EntityF entityF1 : entityFs) {
-//            for (EntityF entityF2 : endEntity.getEntityF()) {
-//                String tem = "And(Composite(F.FId="+entityF1.getF_FId()
-//                        +"),Composite(F.FId="+entityF2.getF_FId()+")),";
-//                query = query + tem;
-//            }
-//        }
-        query = query.substring(0,query.length()-1);
-        //query = query + ")";
-        String jsonStr = SendApi.send(query, 10000, 0, attribute);
-        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
-        List<Entity> entities = apiResponse.getEntities();
-        for (Entity entityRes : entities) {
-            for (EntityF entityF : entityRes.getEntityF()) {
-                if (FIds.contains(entityF.getF_FId())) {
-                    long[] tem = {beginId,entityF.getF_FId(),endId};
-                    res.add(tem);
-                }
+        for (EntityF entityF:endEntity.getEntityF()) {
+            if (FIds.contains(entityF.getF_FId())) {
+                long[] tem = {beginId,entityF.getF_FId(),endId};
+                res.add(tem);
             }
         }
         return res;
@@ -453,5 +434,5 @@ public class Strategy {
     //20一组 长度超出了会有问题
     //idid测试 2042486495 2118168041 get
     //ididid测试 2042486495 2118168041 1982896842 get
-    //IdFIdId测试 2118168041 166052673 2147493587
+    //IdFIdId测试 2118168041 166052673 2114535528 get
 }
