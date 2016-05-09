@@ -5,6 +5,7 @@ import NetworkTool.SendApi;
 import Path.PathTools;
 import Struct.*;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -221,38 +222,220 @@ public class Strategy {
         List<long[]> res = new ArrayList<long[]>();
         List<EntityR> entityRs = entity.getEntityR();
         String query = "";
-        query = "And(Or(";
-        for (EntityR entityR : entityRs) {
-            query+="Id="+entityR.getRId()+",";
-        }
-        query = query.substring(0,query.length()-1);
-        query += "),RId="+endId+")";
-        String jsonStr = SendApi.send(query,1000,0,attribute);
-        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
-        List<Entity> entities = apiResponse.getEntities();
-        for (Entity entity1 : entities) {
-            long[] l = {beginId,entity1.getId(),endId};
-            res.add(l);
+        if (entityRs.size()>=2) {
+            query = "And(";
+            for (int i=0;i<entityRs.size()-1;i++) {
+                query+="Or(";
+            }
+            query += "Id=" + entityRs.get(0).getRId() + ",";
+            for (int i=1;i<entityRs.size();i++) {
+                query+="Id=" + entityRs.get(i).getRId()+"),";
+            }
+//            for (EntityR entityR : entityRs) {
+//                query += "Id=" + entityR.getRId() + ",";
+//            }
+            query += "RId=" + endId + ")";
+            String jsonStr = SendApi.send(query, 10000, 0, attribute);
+            APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+            List<Entity> entities = apiResponse.getEntities();
+            for (Entity entity1 : entities) {
+                long[] l = {beginId, entity1.getId(), endId};
+                res.add(l);
+            }
         }
         return res;
     }
 
-    public List<long[]> IDMULTIID(long beginId, long endId, Entity entity) {
+    public List<long[]> IdFIdId(long beginId, long endId, Entity entity) {
         List<long[]> res = new ArrayList<long[]>();
+        List<EntityF> entityFs = entity.getEntityF();
+        List<Long> FIds = new ArrayList<Long>();
+        for (EntityF entityF:entityFs) {
+            FIds.add(entityF.getF_FId());
+        }
+
+        Entity endEntity = getById(endId);
+        String query = "Or(";
+        for (EntityF entityF1 : entityFs) {
+            for (EntityF entityF2 : endEntity.getEntityF()) {
+                String tem = "And(Composite(F.FId="+entityF1.getF_FId()
+                        +"),Composite(F.FId="+entityF2.getF_FId()+")),";
+                query = query + tem;
+            }
+        }
+        query = query.substring(0,query.length()-1);
+        query = query + ")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entityRes : entities) {
+            for (EntityF entityF : entityRes.getEntityF()) {
+                if (FIds.contains(entityF.getF_FId())) {
+                    long[] tem = {beginId,entityF.getF_FId(),endId};
+                    res.add(tem);
+                }
+            }
+        }
+        return res;
+    }
+
+    public List<long[]> IdCIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        EntityC entityC = entity.getEntityC();
+        if (entityC == null)
+            return res;
+        String query = "And(C.CId="+entity.getEntityC().getC_Id()+",Id="+endId+")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entityRes : entities) {
+            long[] tem = {beginId,entity.getEntityC().getC_Id(),endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+    public List<long[]> IdJIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        EntityJ entityJ = entity.getEntityJ();
+        if (entityJ == null)
+            return res;
+        String query = "And(J.JId="+entity.getEntityJ().getJ_Id()+",Id="+endId+")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entityRes : entities) {
+            long[] tem = {beginId,entity.getEntityJ().getJ_Id(),endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+    public List<long[]> IdAuIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        List<EntityAA> entityAAs = entity.getEntityAA();
+        List<Long> auids = new ArrayList<Long>();
+        for (EntityAA entityAA:entityAAs) {
+            auids.add(entityAA.getAA_AuId());
+        }
+
+        String query = "Or(";
+        for (EntityAA entityAA : entityAAs) {
+            String tem = "And(Composite(AA.AuId="
+                    + entityAA.getAA_AuId() + "),Id=" + endId + "),";
+            query = query+tem;
+        }
+        query = query.substring(0, query.length() - 1);
+        query = query + ")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entityRes : entities) {
+            for (EntityAA entityAA:entityRes.getEntityAA()) {
+                if (auids.contains(entityAA.getAA_AuId())) {
+                    long[] tem = {beginId,entityAA.getAA_AuId(),endId};
+                    res.add(tem);
+                }
+            }
+        }
+        return res;
+    }
+
+    public List<long[]> AuIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        String query = "And(Composite(AA.AuId="+beginId+"),Id="+endId+")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        if (!entities.isEmpty()){
+            long[] tem = {beginId,endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+    public List<long[]> AuIdIdId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        String query = "And(Composite(AA.AuId="+beginId+"),RId="+endId+")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entity1:entities) {
+            long[] tem = {beginId,entity1.getId(),endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+
+    public List<long[]> IdAuId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        List<EntityAA> entityAAs = entity.getEntityAA();
+        for (EntityAA entityAA: entityAAs) {
+            if (entityAA.getAA_AuId() == endId) {
+                long[] tem = {beginId,endId};
+                res.add(tem);
+                break;
+            }
+        }
+        return res;
+    }
+
+    public List<long[]> AuIdIdAuId(long beginId, long endId, Entity entity) {
+        List<long[]> res = new ArrayList<long[]>();
+        String query = "And("+"Composite(AA.AuId="+beginId+"),Composite(AA.AuId="+endId+"))";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entity1:entities) {
+            long[] tem = {beginId,entity1.getId(),endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+    public List<long[]> AuIdAfIdAuId(long beginId, long endId, long AfId) {
+        List<long[]> res = new ArrayList<long[]>();
+        String query = "Composite(And(AA.AfId="+AfId+",AA.AuId="+endId+"))";
+        String jsonStr = SendApi.send(query, 1, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        if (!entities.isEmpty()) {
+            long[] tem = {beginId,AfId,endId};
+            res.add(tem);
+        }
+        return res;
+    }
+
+    public List<long[]> AuIdAfIdAuIdId(long beginId, long endId, long AfId) {
+        List<long[]> res = new ArrayList<long[]>();
+        String query = "And(Composite(AA.AfId="+AfId+"),Id="+endId+")";
+        String jsonStr = SendApi.send(query, 10000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entity:entities){
+            for (EntityAA entityAA:entity.getEntityAA()) {
+                if (entityAA.getAA_AfId() == AfId) {
+                    long tem[] = {beginId,AfId,entityAA.getAA_AuId(),endId};
+                    res.add(tem);
+                }
+            }
+        }
         return res;
     }
 
     public static void main(String args[]) {
         Strategy strategy = new Strategy();
-        Entity entity = strategy.getById(1502768748);
-        long[] a = {1502768748,0,0,0};
-        strategy.findPath(1502768748l, Constants.ID_TYPE, entity, 2122841972l, Constants.ID_TYPE, a, 1);
-        System.out.println(strategy.res.size());
-        for (long[] l:strategy.res) {
+        Entity entity = strategy.getById(2042486495);
+        List<long[]> res = strategy.IdIdId(2042486495,1982896842,entity);
+        System.out.println(res);
+        for (long[] l:res) {
             for (long t :l){
                 System.out.print(t+" ");
             }
             System.out.println();
         }
     }
+
+    //ididid测试 2042486495 2118168041 1982896842 get
 }
