@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -27,6 +28,10 @@ public class HelloController {
         List<Entity> id2AuIdRes = pathTools.getByAuId(id2);
         if (id1AuIdRes.isEmpty()) id1ISAuId = false;
         if (id2AuIdRes.isEmpty()) id2ISAuId = false;
+        if (id1ISAuId && id2ISAuId) {
+            List<long[]> res = new ArrayList<long[]>();
+
+        }
         return null;
 	}
 }

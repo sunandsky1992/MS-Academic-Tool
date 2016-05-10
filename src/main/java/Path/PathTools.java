@@ -81,7 +81,7 @@ public class  PathTools {
         String query = "Composite(AA.AuId="+AuId+")";
         String attribute = "attributes=Id,F.FId,J.JId,C.CId,AA.AuId,AA.AfId,RId";
         SendApi sendApi = new SendApi();
-        String jsonStr = sendApi.send(query, 1000, 0, attribute);
+        String jsonStr = sendApi.send(query, 1, 0, attribute);
         APIResponse apiResponse = sendApi.analyzeResponse(jsonStr);
         return apiResponse.getEntities();
     }
