@@ -722,11 +722,16 @@ public class Strategy {
 
     public List<long[]> AuIdAfIdAuIdId(long beginId, long endId, long AfId) {
         List<long[]> res = new ArrayList<long[]>();
-        Entity endEntity = getById(endId);
-        for (EntityAA entityAA : endEntity.getEntityAA()) {
-            if (entityAA.getAA_AfId() == AfId) {
-                long tem[] = {beginId,AfId,entityAA.getAA_AuId(),endId};
-                res.add(tem);
+        String query = "And(Composite(AA.AfId="+AfId+"),Id="+endId+")";
+        String jsonStr = SendApi.send(query, 1000, 0, attribute);
+        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+        List<Entity> entities = apiResponse.getEntities();
+        for (Entity entity:entities){
+            for (EntityAA entityAA:entity.getEntityAA()) {
+                if (entityAA.getAA_AfId() == AfId) {
+                    long tem[] = {beginId,AfId,entityAA.getAA_AuId(),endId};
+                    res.add(tem);
+                }
             }
         }
         return res;
