@@ -21,7 +21,7 @@ public class SendApi {
 
     public  static String send(String query, int count,int offset,String attributes) {
          CommunicationTool communicationTool = new CommunicationTool();
-        String request = "https://oxfordhk.azure-api.net/academic/v1.0/evaluate?"
+        String request = "http://oxfordhk.azure-api.net/academic/v1.0/evaluate?"
                 +"expr="+query+"&count="+count+"&offset="+offset+"&"+attributes
                 + "&subscription-key="+key;
         String res = "";
@@ -30,7 +30,6 @@ public class SendApi {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(res);
         return res;
     }
 

@@ -1,7 +1,9 @@
 package com.springapp.mvc;
 
 import Path.PathTools;
+import Strategy.Strategy;
 import Struct.Entity;
+import org.json.JSONArray;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,7 @@ public class HelloController {
         PathTools pathTools = new PathTools();
 		String id1str = request.getParameter("id1");
 		String id2str = request.getParameter("id2");
+        System.out.println(id1str+" "+id2str);
         long id1 = Long.parseLong(id1str);
         long id2 = Long.parseLong(id2str);
         boolean id1ISAuId = true;
@@ -28,10 +31,34 @@ public class HelloController {
         List<Entity> id2AuIdRes = pathTools.getByAuId(id2);
         if (id1AuIdRes.isEmpty()) id1ISAuId = false;
         if (id2AuIdRes.isEmpty()) id2ISAuId = false;
-        if (id1ISAuId && id2ISAuId) {
-            List<long[]> res = new ArrayList<long[]>();
+        System.out.println("id1= "+id1 +"  id2= "+id2);
 
+        Strategy strategy = new Strategy();
+        List<long[]> res = new ArrayList<long[]>();
+        if (id1ISAuId && id2ISAuId) {
+            System.out.println("AUIDAUID");
+            res = strategy.findAllAuIdAuId(id1,id2);
+        } else if (id1ISAuId && !id2ISAuId) {
+            System.out.println("AuIdId");
+            res = strategy.findAllAuIdId(id1,id2);
+        } else if (!id1ISAuId && id2ISAuId){
+            System.out.println("IDAUID");
+            res = strategy.findAllIdAuId(id1,id2);
+        } else if (!id1ISAuId && !id2ISAuId) {
+            System.out.println("IDID");
+            res = strategy.findAllIdId(id1,id2);
         }
-        return null;
+
+        System.out.println(res.size());
+
+        JSONArray jsonArray = new JSONArray();
+        for (long[] larr:res){
+            JSONArray array = new JSONArray();
+            for (long l:larr) {
+                array.put(l);
+            }
+            jsonArray.put(array);
+        }
+        return jsonArray.toString();
 	}
 }
