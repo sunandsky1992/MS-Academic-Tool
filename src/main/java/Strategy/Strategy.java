@@ -727,6 +727,7 @@ public class Strategy {
         List<long[]> res = new ArrayList<long[]>();
         if (AfId == 0)
             return  res;
+        
         String query = "And(Composite(AA.AfId="+AfId+"),Id="+endId+")";
         String jsonStr = SendApi.send(query, 1000, 0, attribute);
         APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
