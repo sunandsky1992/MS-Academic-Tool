@@ -808,8 +808,11 @@ public class Strategy {
             resIdIdAuId.add(tem);
         }
         res.addAll(resAuIdIdAuId);
+        System.out.println("AuIdIdAuId " + resAuIdIdAuId.size());
         res.addAll(resIdIdAuId);
+        System.out.println("IdIdAuId " + resIdIdAuId.size());
         res.addAll(resAuIdAfIdAuId);
+        System.out.println("AuIdAfIdAuId " + resAuIdAfIdAuId.size());
         return  res;
     }
 

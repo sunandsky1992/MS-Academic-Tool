@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ss on 16-5-12.
  */
-public class IdIdId extends Thread{
+public class IdIdId implements Runnable{
     public List<long[]> res;
 
     private long beginId;
@@ -32,7 +32,7 @@ public class IdIdId extends Thread{
     }
 
     public void run() {
-        if (preId!=-1 && preId!=0)
+        if (preId==-1 || preId==0)
             res.addAll(strategy.IdIdId(beginId, endId, entity));
         else {
             List<long[]> tem = strategy.IdIdId(beginId,endId,entity);

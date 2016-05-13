@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by ss on 16-5-11.
  */
-public class IdId extends Thread {
+public class IdId implements Runnable {
     public List<long[]> res;
 
     private long beginId;

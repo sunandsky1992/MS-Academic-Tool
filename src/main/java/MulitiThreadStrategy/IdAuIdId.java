@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by ss on 16-5-12.
  */
-public class IdAuIdId extends Thread{
+public class IdAuIdId implements Runnable{
     public List<long[]> res;
 
     private long beginId;
@@ -31,7 +31,7 @@ public class IdAuIdId extends Thread{
     }
 
     public void run() {
-        if (preId!=-1 && preId!=0)
+        if (preId==-1 || preId==0)
             res.addAll(strategy.IdAuIdId(beginId, endId, entity));
         else {
             List<long[]> tem = strategy.IdAuIdId(beginId, endId, entity);

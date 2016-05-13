@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by ss on 16-5-12.
  */
-public class IdJIdIdAuId extends Thread {
+public class IdJIdIdAuId implements Runnable {
     public List<long[]> res;
 
     private long beginId;
