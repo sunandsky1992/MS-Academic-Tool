@@ -707,35 +707,76 @@ public class Strategy {
         return res;
     }
 
-    public List<long[]> AuIdAfIdAuId(long beginId, long endId, long AfId) {
+    public List<long[]> AuIdAfIdAuId(long beginId, long endId, List<Long> AfId) {
         List<long[]> res = new ArrayList<long[]>();
-        if (AfId == 0)
+        if (AfId.isEmpty())
             return  res;
 
-        String query = "Composite(And(AA.AfId="+AfId+",AA.AuId="+endId+"))";
-        String jsonStr = SendApi.send(query, 1, 0, attribute);
+       // String query = "Composite(And(AA.AfId="+AfId+",AA.AuId="+endId+"))";
+        String query = "";
+        if (AfId.size()>=2) {
+            query = "Composite(And(";
+            for (int i=1;i<AfId.size();i++){
+                query+="Or(";
+            }
+            query+="AA.AfId="+AfId.get(0)+",";
+            for (int i=1;i<AfId.size();i++) {
+                query+="AA.AfId="+AfId.get(i)+"),";
+            }
+            query+="AA.AuId="+endId+"))";
+        } else if (AfId.size()==1){
+            query = "Composite(And(AA.AfId="+AfId.get(0)+",AA.AuId="+endId+"))";
+        }
+        String jsonStr = SendApi.send(query, 1000, 0, attribute);
         APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
         List<Entity> entities = apiResponse.getEntities();
         if (!entities.isEmpty()) {
-            long[] tem = {beginId,AfId,endId};
-            res.add(tem);
+            for(Entity entity:entities) {
+                for (EntityAA entityAA:entity.getEntityAA()) {
+                        if (AfId.contains(entityAA.getAA_AfId())) {
+                            long[] tem = {beginId, entityAA.getAA_AfId(), endId};
+                            AfId.remove(entityAA.getAA_AfId());
+                            res.add(tem);
+                        }
+                }
+            }
         }
         return res;
     }
 
-    public List<long[]> AuIdAfIdAuIdId(long beginId, long endId, long AfId) {
+    public List<long[]> AuIdAfIdAuIdId(long beginId, long endId, List<Long> AfId) {
         List<long[]> res = new ArrayList<long[]>();
-        if (AfId == 0)
+        if (AfId.isEmpty())
             return  res;
-        
-        String query = "And(Composite(AA.AfId="+AfId+"),Id="+endId+")";
-        String jsonStr = SendApi.send(query, 1000, 0, attribute);
-        APIResponse apiResponse = SendApi.analyzeResponse(jsonStr);
+
+//        String query = "And(Composite(AA.AfId="+AfId+"),Id="+endId+")";
+        String query = "";
+        if (AfId.size()>=2) {
+            query = "And(";
+            for (int i=1;i<AfId.size();i++){
+                query+="Or(";
+            }
+            query+="Composite(AA.AfId="+AfId.get(0)+"),";
+            for (int i=1;i<AfId.size();i++) {
+                query+="Composite(AA.AfId="+AfId.get(i)+")),";
+            }
+            query+="Id="+endId+")";
+        } else if (AfId.size()==1){
+            query = "And(Composite(AA.AfId="+AfId.get(0)+"),Id="+endId+")";
+        }
+        APIResponse apiResponse;
+        try {
+            String jsonStr = SendApi.send(query, 1000, 0, attribute);
+            apiResponse = SendApi.analyzeResponse(jsonStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return res;
+        }
         List<Entity> entities = apiResponse.getEntities();
         for (Entity entity:entities){
             for (EntityAA entityAA:entity.getEntityAA()) {
-                if (entityAA.getAA_AfId() == AfId) {
-                    long tem[] = {beginId,AfId,entityAA.getAA_AuId(),endId};
+                if (AfId.contains(entityAA.getAA_AfId())) {
+                    long tem[] = {beginId,entityAA.getAA_AfId(),entityAA.getAA_AuId(),endId};
                     res.add(tem);
                 }
             }
@@ -751,9 +792,7 @@ public class Strategy {
         List<Long> afIds = this.getAfIdByAuId(beginId);
         List<long[]> res = new ArrayList<long[]>();
         List<long[]> resAuIdIdAuId = this.AuIdIdAuId(beginId, endId);
-        for (long l : afIds) {
-            res.addAll(this.AuIdAfIdAuId(beginId, endId, l));
-        }
+        List<long[]> resAuIdAfIdAuId = AuIdAfIdAuId(beginId, endId, afIds);
 
         List<Entity> entities = getByAuId(beginId);
         List<long[]> resIdIdAuIdtem = new ArrayList<long[]>();
@@ -770,6 +809,7 @@ public class Strategy {
         }
         res.addAll(resAuIdIdAuId);
         res.addAll(resIdIdAuId);
+        res.addAll(resAuIdAfIdAuId);
         return  res;
     }
 
@@ -788,9 +828,8 @@ public class Strategy {
 
         for (EntityAA entityAA:entity.getEntityAA()) {
             List<Long> AfIds = this.getAfIdByAuId(entityAA.getAA_AuId());
-            for (long l : AfIds) {
-                resIdAuIdAfIdAuIdTem.addAll(AuIdAfIdAuId(entityAA.getAA_AuId(), endId, l));
-            }
+            resIdAuIdAfIdAuIdTem.addAll(AuIdAfIdAuId(entityAA.getAA_AuId(), endId, AfIds));
+
         }
         List<long[]> resIdAuIdAfIdAuId = new ArrayList<long[]>();
             for (long[] l: resIdAuIdAfIdAuIdTem) {
@@ -840,9 +879,8 @@ public class Strategy {
         List<Entity> entities = getByAuId(beginId);
         List<long[]> resAuIdId = AuIdId(beginId, endId);
         List<long[]> resAuIdIdId = AuIdIdId(beginId, endId);
-        for (long l:AfIds) {
-            res.addAll(AuIdAfIdAuIdId(beginId, endId, l));
-        }
+        List<long[]> resAuIdAfIdAuIdId = AuIdAfIdAuIdId(beginId, endId, AfIds);
+
         List<long[]> resIdFIdId = new ArrayList<long[]>();
         List<long[]> resIdCIdId = new ArrayList<long[]>();
         List<long[]> resIdJIdId = new ArrayList<long[]>();
@@ -898,7 +936,8 @@ public class Strategy {
         System.out.println("AuIdId " + resAuIdId.size());
         res.addAll(resAuIdIdId);
         System.out.println("AuIdIdId " + resAuIdIdId.size());
-        System.out.println("AuIdAfIdAuIdId " );
+        res.addAll(resAuIdAfIdAuIdId);
+        System.out.println("AuIdAfIdAuIdId " + resAuIdAfIdAuIdId.size());
         res.addAll(resAuIdIdFIdId);
         System.out.println("AuIdIdFIdId " + resAuIdIdFIdId.size());
         res.addAll(resAuIdIdCIdId);
@@ -1019,7 +1058,8 @@ public class Strategy {
     public static void main(String args[]) {
         Strategy strategy = new Strategy();
         Entity entity = strategy.getById(2042486495);
-        List<long[]> res = strategy.findAllIdId(2042486495, 2118168041);
+        List<Long> afids = strategy.getAfIdByAuId(2100760765);
+        List<long[]> res = strategy.AuIdAfIdAuIdId(2100760765, 2085261163,afids);
         for (long[] l:res) {
             for (long t :l){
                 System.out.print(t+" ");
